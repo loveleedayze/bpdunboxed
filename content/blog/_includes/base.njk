@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - BPD Unboxed</title>
+    <meta name="description" content="{{ excerpt or 'Feel Loudly. Heal Loudly. Nervous system education, tools, and community for people with BPD.' }}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ title }} - BPD Unboxed">
+    <meta property="og:description" content="{{ excerpt or 'Feel Loudly. Heal Loudly.' }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23000000%22/><text x=%2250%22 y=%2270%22 font-size=%2270%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 fill=%22%23EF4444%22 text-anchor=%22middle%22>B</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="/">BPDUNBOXED</a>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="/#home" class="nav-link">Home</a></li>
+                <li class="nav-item"><a href="/#about" class="nav-link">About</a></li>
+                <li class="nav-item"><a href="/#features" class="nav-link">What I Offer</a></li>
+                <li class="nav-item"><a href="/blog/" class="nav-link">Blog</a></li>
+                <li class="nav-item"><a href="/#shop" class="nav-link">Shop</a></li>
+                <li class="nav-item"><a href="/#contact" class="nav-link">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    {{ content | safe }}
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 BPD Unboxed. Feel Loudly. Heal Loudly.</p>
+            <ul class="footer-links">
+                <li><a href="/#home">Home</a></li>
+                <li><a href="/#about">About</a></li>
+                <li><a href="/blog/">Blog</a></li>
+                <li><a href="/#shop">Shop</a></li>
+                <li><a href="/#contact">Contact</a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script src="/script.js"></script>
+</body>
+</html>

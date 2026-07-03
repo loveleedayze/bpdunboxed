@@ -1,0 +1,31 @@
+---
+layout: base.njk
+permalink: /index.html
+title: The Work
+excerpt: "Real thoughts. Real tools. Real transformation. Nervous system education and no-shame BPD essays."
+---
+<header class="hero blog-hero" id="home">
+    <div class="hero-content">
+        <h1 class="hero-title">The Work</h1>
+        <p class="hero-subtitle">Real thoughts. Real tools. Real transformation.</p>
+    </div>
+</header>
+
+<section class="blog" id="blog-listing">
+    <div class="container">
+        <div class="blog-feed">
+            {% for post in collections.post | reverse %}
+            <article class="blog-post">
+                <header class="post-header">
+                    <h3 class="post-title"><a href="/blog/{{ post.fileSlug }}/">{{ post.data.title }}</a></h3>
+                    <time datetime="{{ post.data.date | htmlDateString }}" class="post-date">{{ post.data.date | readableDate }}</time>
+                </header>
+                <p class="post-excerpt">{{ post.data.excerpt }}</p>
+                <a href="/blog/{{ post.fileSlug }}/" class="read-more">Read full post &rarr;</a>
+            </article>
+            {% else %}
+            <p class="blog-empty">Nothing published yet, check back soon.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>

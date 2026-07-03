@@ -417,6 +417,115 @@ p {
     border-bottom-color: var(--color-white);
 }
 
+.blog-teaser-text {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 1rem;
+}
+
+.blog-empty {
+    text-align: center;
+}
+
+/* ============================================
+   BLOG HERO VARIANT (blog listing page)
+   ============================================ */
+
+.blog-hero {
+    min-height: 40vh;
+    padding: 3rem var(--spacing-unit);
+}
+
+/* ============================================
+   FULL ARTICLE PAGE
+   ============================================ */
+
+.post-full {
+    padding: 4rem var(--spacing-unit) 5rem;
+}
+
+.post-full .container {
+    max-width: 800px;
+}
+
+.post-full .back-link {
+    display: inline-block;
+    margin-bottom: 2rem;
+}
+
+.post-full .post-header {
+    border-left: 3px solid var(--color-red);
+    padding-left: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.post-full .post-title {
+    font-size: 2.5rem;
+    color: var(--color-red);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.post-body {
+    color: var(--color-gray-light);
+    line-height: 1.8;
+    font-size: 1.1rem;
+}
+
+.post-body h2 {
+    margin-top: 2.5rem;
+}
+
+.post-body h3 {
+    margin-top: 2rem;
+}
+
+.post-body p {
+    color: var(--color-gray-light);
+}
+
+.post-body a {
+    text-decoration: underline;
+}
+
+.post-body ul,
+.post-body ol {
+    margin: 0 0 1.5rem 1.5rem;
+}
+
+.post-body li {
+    margin-bottom: 0.5rem;
+    color: var(--color-gray-light);
+}
+
+.post-body blockquote {
+    border-left: 3px solid var(--color-red);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    color: var(--color-white);
+    font-style: italic;
+}
+
+.post-body img {
+    max-width: 100%;
+    height: auto;
+    margin: 1.5rem 0;
+}
+
+.post-full > .container > .read-more:last-child {
+    display: inline-block;
+    margin-top: 2.5rem;
+}
+
+@media (max-width: 480px) {
+    .post-full .post-title {
+        font-size: 1.75rem;
+    }
+
+    .post-full .post-header {
+        padding-left: 1rem;
+    }
+}
+
 /* ============================================
    SHOP SECTION
    ============================================ */

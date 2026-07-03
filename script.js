@@ -85,47 +85,49 @@ document.querySelectorAll('.btn-shop').forEach(button => {
 const contactForm = document.getElementById('contactForm');
 const formNotice = document.getElementById('formNotice');
 
-contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    // Get form data
-    const formData = new FormData(contactForm);
-    const data = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        subject: formData.get('subject'),
-        message: formData.get('message')
-    };
+        // Get form data
+        const formData = new FormData(contactForm);
+        const data = {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            subject: formData.get('subject'),
+            message: formData.get('message')
+        };
 
-    // Validate form
-    if (!data.name || !data.email || !data.subject || !data.message) {
-        showFormNotice('Please fill out all fields.', 'error');
-        return;
-    }
+        // Validate form
+        if (!data.name || !data.email || !data.subject || !data.message) {
+            showFormNotice('Please fill out all fields.', 'error');
+            return;
+        }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-        showFormNotice('Please enter a valid email address.', 'error');
-        return;
-    }
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(data.email)) {
+            showFormNotice('Please enter a valid email address.', 'error');
+            return;
+        }
 
-    // Since this is a static site without backend, we'll show a success message
-    // In production, you would send this data to a backend service or email service
-    console.log('Form submitted with data:', data);
-    
-    // Show success message
-    showFormNotice('Message received! Thank you for reaching out. We\'ll be in touch soon.', 'success');
+        // Since this is a static site without backend, we'll show a success message
+        // In production, you would send this data to a backend service or email service
+        console.log('Form submitted with data:', data);
 
-    // Reset form
-    contactForm.reset();
+        // Show success message
+        showFormNotice('Message received! Thank you for reaching out. We\'ll be in touch soon.', 'success');
 
-    // Clear message after 5 seconds
-    setTimeout(() => {
-        formNotice.textContent = '';
-        formNotice.classList.remove('success', 'error');
-    }, 5000);
-});
+        // Reset form
+        contactForm.reset();
+
+        // Clear message after 5 seconds
+        setTimeout(() => {
+            formNotice.textContent = '';
+            formNotice.classList.remove('success', 'error');
+        }, 5000);
+    });
+}
 
 // Helper function to display form messages
 function showFormNotice(message, type) {

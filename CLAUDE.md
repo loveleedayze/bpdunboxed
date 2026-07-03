@@ -4,13 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A single-page marketing site for "BPD Unboxed" (brand: "Feel Loudly. Heal Loudly.") with a small serverless backend for shop checkout. The page itself is plain HTML/CSS/JS with no build step — open `index.html` directly in a browser or serve the directory with any static file server to preview markup/style changes. The checkout flow requires the Node backend described below.
+A marketing site for "BPD Unboxed" (brand: "Feel Loudly. Heal Loudly.") with three parts: a static homepage, a Stripe/Printful shop checkout backend, and an Eleventy-built blog editable through a Git-based CMS (Decap) at `/admin`. The homepage itself is plain HTML/CSS/JS with no build step — open `index.html` directly in a browser to preview markup/style changes. The blog requires the Eleventy build; checkout requires the Node backend. Both are described below.
 
 ## Commands
 
-- `npm install` — install backend dependencies (`stripe`, `jest`).
+- `npm install` — install dependencies (`stripe`, `@11ty/eleventy`, `jest`).
+- `npm run build` — build the blog (`content/blog/**` → `blog/`) via Eleventy. Run this after any change under `content/blog/` or `.eleventy.js`.
 - `npm test` — run the Jest suite for the API endpoints (`tests/*.test.js`). Run a single file with `npx jest tests/create-checkout-session.test.js`.
-- `vercel dev` — run the site + `/api` serverless functions locally (requires the Vercel CLI and a `.env` populated from `.env.example`).
+- `vercel dev` — run the whole site (static files + `/api` functions + Eleventy build via `vercel.json`'s `buildCommand`) locally. Requires the Vercel CLI and a `.env` populated from `.env.example`.
 
 ## Architecture
 
@@ -36,7 +37,21 @@ Deployed as Vercel serverless functions under `api/`, backed by a shared `lib/` 
 
 Required env vars (see `.env.example`): `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `PRINTFUL_API_KEY`, one `PRINTFUL_VARIANT_*` per product, and `CLIENT_URL`. Never commit a real `.env` — it's gitignored.
 
+## Blog + CMS architecture (Eleventy + Decap CMS)
+
+The blog is generated, not hand-written — content lives as markdown in `content/blog/posts/*.md`, and `npm run build` (Eleventy, config in `.eleventy.js`) renders it into `blog/` at the repo root, which is gitignored and rebuilt on every Vercel deploy via `vercel.json`'s `buildCommand`.
+
+- **`content/blog/posts/*.md`** — one file per post, frontmatter `title` / `date` / `excerpt` + a markdown `body`. `posts.json` in that folder is an Eleventy directory data file supplying the shared `layout`, `tags`, and `permalink` so individual posts don't repeat that boilerplate.
+- **`content/blog/index.njk`** — the listing page (`/blog/`), loops over `collections.post`.
+- **`content/blog/_includes/base.njk`** — shared HTML shell (nav/footer/fonts) reused by both the listing and article layouts, kept visually consistent with the homepage's `style.css` classes.
+- **`content/blog/_includes/post.njk`** — individual article layout.
+- **Permalinks are written without a `/blog` prefix** (e.g. `/index.html`, `/{{ page.fileSlug }}/index.html`) because Eleventy's `output` dir is already `blog` — adding the prefix in the permalink double-nests the output (`blog/blog/...`). Links *to* posts are built manually as `/blog/{{ post.fileSlug }}/` rather than via `post.url`, since Eleventy's computed `url` doesn't know these files get served under a `/blog` path once deployed alongside the rest of the static site.
+- **`admin/index.html` + `admin/config.yml`** — Decap CMS. The `github` backend commits directly to `content/blog/posts/` on `main` on publish. `config.yml`'s `base_url` must be set to the site's real production domain (must exactly match the GitHub OAuth App's callback URL).
+- **`api/auth.js` + `api/callback.js`** — a self-hosted GitHub OAuth provider for Decap (no Netlify dependency), implementing the standard `authorization:github:success:{...}` postMessage handshake the CMS expects. `api/auth.js` sets a random `state` in an HttpOnly cookie before redirecting to GitHub; `api/callback.js` validates it matches on return (CSRF protection) before exchanging the code for a token server-side. Env vars: `GITHUB_OAUTH_CLIENT_ID` / `GITHUB_OAUTH_CLIENT_SECRET`.
+- **Actual access control is GitHub's, not this code's**: any GitHub user can complete the OAuth login, but only accounts with write/collaborator access to this repo can actually push a save — GitHub's own API enforces that. There is no separate allowlist to maintain here.
+
 ## Editing conventions already in place
 
-- Blog posts and shop products are hand-written repeated markup blocks (`.blog-post`, `.product-card`), not generated from data — add new ones by copying an existing block's structure.
-- New page sections should follow the existing pattern: a `<section class="name" id="name">` wrapping a `.container`, with a matching nav item added in both the desktop `.nav-menu` and footer `.footer-links` lists in `index.html`.
+- Shop products are a hand-written repeated markup block (`.product-card`) in `index.html`, not generated from data — add new ones by copying an existing block's structure (and adding a matching entry to `lib/products.js` if it should be purchasable).
+- New homepage sections should follow the existing pattern: a `<section class="name" id="name">` wrapping a `.container`, with a matching nav item added in both the desktop `.nav-menu` and footer `.footer-links` lists in `index.html`.
+- `script.js` is shared across the homepage, blog pages, and any other page that includes it — element lookups for page-specific features (like the contact form) must null-check before adding listeners, since not every page has every element.
