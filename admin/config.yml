@@ -5,7 +5,7 @@ backend:
   # Must be the exact production domain this site is deployed to (same value
   # you use for CLIENT_URL). It has to match the GitHub OAuth App's
   # "Authorization callback URL" (<base_url>/api/callback) exactly.
-  base_url: https://REPLACE_WITH_YOUR_DOMAIN
+  base_url: https://bpdunboxed.vercel.app
   auth_endpoint: api/auth
 
 # Uploaded images are committed to the repo here...
