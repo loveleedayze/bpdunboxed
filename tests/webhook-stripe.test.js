@@ -54,7 +54,7 @@ describe('POST /api/webhooks/stripe', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.STRIPE_WEBHOOK_SECRET = 'whsec_test';
-    process.env.PRINTFUL_VARIANT_BEFORE_YOU_SPIRAL = 'variant_123';
+    process.env.PRINTFUL_VARIANT_CROP_HOODIE = 'variant_123';
   });
 
   test('rejects non-POST requests', async () => {
@@ -100,7 +100,7 @@ describe('POST /api/webhooks/stripe', () => {
       data: { object: baseSession() },
     });
     stripe.checkout.sessions.listLineItems.mockResolvedValue(
-      lineItemsWithProduct('before-you-spiral', 1)
+      lineItemsWithProduct('crop-hoodie', 1)
     );
     createPrintfulOrder.mockResolvedValue({ ok: true, data: { result: { id: 999 } } });
 
@@ -120,7 +120,7 @@ describe('POST /api/webhooks/stripe', () => {
           zip: '78701',
           email: 'jamie@example.com',
         }),
-        items: [{ variant_id: 'variant_123', quantity: 1 }],
+        items: [{ sync_variant_id: 'variant_123', quantity: 1 }],
       })
     );
     expect(res.status).toHaveBeenCalledWith(200);
@@ -132,7 +132,7 @@ describe('POST /api/webhooks/stripe', () => {
       data: { object: baseSession() },
     });
     stripe.checkout.sessions.listLineItems.mockResolvedValue(
-      lineItemsWithProduct('before-you-spiral', 1)
+      lineItemsWithProduct('crop-hoodie', 1)
     );
     createPrintfulOrder.mockResolvedValue({ ok: false, error: 'Printful is down' });
 
@@ -149,7 +149,7 @@ describe('POST /api/webhooks/stripe', () => {
       data: { object: baseSession() },
     });
     stripe.checkout.sessions.listLineItems.mockResolvedValue(
-      lineItemsWithProduct('before-you-spiral', 1)
+      lineItemsWithProduct('crop-hoodie', 1)
     );
     createPrintfulOrder.mockRejectedValue(new Error('ECONNRESET'));
 
@@ -181,7 +181,7 @@ describe('POST /api/webhooks/stripe', () => {
       data: { object: baseSession() },
     });
     stripe.checkout.sessions.listLineItems.mockResolvedValue(
-      lineItemsWithProduct('boundary-reset', 1) // no PRINTFUL_VARIANT_BOUNDARY_RESET env var set
+      lineItemsWithProduct('not-a-real-product', 1) // not in the catalog at all
     );
 
     const req = { method: 'POST', headers: { 'stripe-signature': 'valid' } };

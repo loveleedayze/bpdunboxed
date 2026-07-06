@@ -53,7 +53,7 @@ describe('POST /api/create-checkout-session', () => {
   });
 
   test('rejects invalid quantities', async () => {
-    const req = { method: 'POST', body: { items: [{ id: 'before-you-spiral', quantity: 0 }] } };
+    const req = { method: 'POST', body: { items: [{ id: 'crop-hoodie', quantity: 0 }] } };
     const res = mockRes();
 
     await handler(req, res);
@@ -67,7 +67,7 @@ describe('POST /api/create-checkout-session', () => {
     const req = {
       method: 'POST',
       // A tampered client could try to send its own "price" - it must be ignored.
-      body: { items: [{ id: 'before-you-spiral', quantity: 2, price: 1 }] },
+      body: { items: [{ id: 'crop-hoodie', quantity: 2, price: 1 }] },
     };
     const res = mockRes();
 
@@ -81,7 +81,7 @@ describe('POST /api/create-checkout-session', () => {
             quantity: 2,
             price_data: expect.objectContaining({
               currency: 'usd',
-              unit_amount: 2700,
+              unit_amount: 4350,
             }),
           }),
         ],
@@ -96,7 +96,7 @@ describe('POST /api/create-checkout-session', () => {
 
     const req = {
       method: 'POST',
-      body: { items: [{ id: 'before-you-spiral', quantity: 1 }] },
+      body: { items: [{ id: 'crop-hoodie', quantity: 1 }] },
     };
     const res = mockRes();
 

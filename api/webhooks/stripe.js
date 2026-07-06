@@ -74,7 +74,7 @@ async function handleCheckoutCompleted(session) {
     }
 
     printfulItems.push({
-      variant_id: product.printfulVariantId,
+      sync_variant_id: product.printfulVariantId,
       quantity: lineItem.quantity,
     });
   }
