@@ -111,7 +111,7 @@ describe('POST /api/webhooks/stripe', () => {
 
     expect(createPrintfulOrder).toHaveBeenCalledWith(
       expect.objectContaining({
-        external_id: 'cs_test_123',
+        external_id: expect.stringMatching(/^[0-9a-f]{32}$/),
         recipient: expect.objectContaining({
           name: 'Jamie Rivera',
           city: 'Austin',

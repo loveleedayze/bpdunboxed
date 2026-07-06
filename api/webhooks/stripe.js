@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const stripe = require('../../lib/stripeClient');
 const { getRawBody } = require('../../lib/getRawBody');
 const { getProductById } = require('../../lib/products');
@@ -94,7 +95,9 @@ async function handleCheckoutCompleted(session) {
   const address = shipping.address;
 
   const orderPayload = {
-    external_id: session.id,
+    // Printful's external_id has a 32-character limit, well under the length
+    // of a Stripe session id, so a truncated hash is used instead.
+    external_id: crypto.createHash('sha256').update(session.id).digest('hex').slice(0, 32),
     recipient: {
       name: shipping.name || (session.customer_details && session.customer_details.name) || '',
       address1: address.line1 || '',
