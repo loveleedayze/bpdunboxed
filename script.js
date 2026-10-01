@@ -137,6 +137,66 @@ function showFormNotice(message, type) {
 }
 
 // ============================================
+// FREEBIE SIGNUP FORM (/free) -> MAILERLITE
+// ============================================
+// Posts straight to the MailerLite embedded form "Shift Starter Kit -
+// bpdunboxed.com/free", which adds the subscriber to the "Shift Starter Kit"
+// group. No API key is involved; this is the same public endpoint the
+// MailerLite embed script uses.
+
+const MAILERLITE_SUBSCRIBE_URL = 'https://assets.mailerlite.com/jsonp/2144585/forms/199864036506994010/subscribe';
+
+const freebieForm = document.getElementById('freebieForm');
+
+if (freebieForm) {
+    const freebieNotice = document.getElementById('freebieNotice');
+    const freebieSuccess = document.getElementById('freebieSuccess');
+    const submitButton = freebieForm.querySelector('button[type="submit"]');
+
+    const showFreebieNotice = (message) => {
+        freebieNotice.textContent = message;
+        freebieNotice.classList.remove('success');
+        freebieNotice.classList.add('error');
+    };
+
+    freebieForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(freebieForm);
+        const email = (formData.get('fields[email]') || '').trim();
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            showFreebieNotice('Please enter a valid email address.');
+            return;
+        }
+
+        formData.set('fields[email]', email);
+        formData.append('ml-submit', '1');
+        formData.append('anticsrf', 'true');
+
+        submitButton.disabled = true;
+        submitButton.textContent = 'Sending...';
+
+        try {
+            const response = await fetch(MAILERLITE_SUBSCRIBE_URL, { method: 'POST', body: formData });
+            const result = await response.json();
+
+            if (!response.ok || !result.success) {
+                throw new Error('MailerLite rejected the signup');
+            }
+
+            freebieForm.hidden = true;
+            freebieSuccess.hidden = false;
+        } catch (error) {
+            console.error('Signup error:', error);
+            submitButton.disabled = false;
+            submitButton.textContent = 'Get the free kit';
+            showFreebieNotice('Something went wrong. Please try again in a moment.');
+        }
+    });
+}
+
+// ============================================
 // SCROLL ANIMATIONS (optional enhancement)
 // ============================================
 
