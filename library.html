@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Wiki-BPD</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Ubuntu:wght@400;500;700&display=swap">
+<style>
+/* Layout: a wiki article column on top of library shelves. Pillars are shelves, topics are entries, three indexes (A to Z, by feeling, by time). Dark-first, night friendly, red only for action. */
+:root{
+  --bg:#0c0a0a; --surface:#161212; --surface2:#1d1716; --fg:#f4f0ef; --muted:#b9adab; --line:#2f2625;
+  --accent:#ef4444; --accent-ink:#0c0a0a; --focus:#fca5a5;
+  --display:'Bebas Neue',Impact,'Arial Narrow',sans-serif;
+  --body:'Ubuntu','Liberation Sans',Arial,sans-serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#faf7f6; --surface:#ffffff; --surface2:#f2ebe9; --fg:#171111; --muted:#5d514f; --line:#e4d9d7;
+    --accent:#d62020; --accent-ink:#ffffff; --focus:#7f1d1d; color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#faf7f6; --surface:#ffffff; --surface2:#f2ebe9; --fg:#171111; --muted:#5d514f; --line:#e4d9d7;
+  --accent:#d62020; --accent-ink:#ffffff; --focus:#7f1d1d; color-scheme:light;
+}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--body); font-size:17px; line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:16px 110px;
+}
+*{box-sizing:border-box}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+.top{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;justify-content:space-between}
+.mark{font-family:var(--display);font-size:2rem;letter-spacing:.06em;text-decoration:none;line-height:1}
+.mark b{color:var(--accent);font-weight:400}
+.nav{display:flex;flex-wrap:wrap;gap:6px}
+.nav a,.theme{font:500 .85rem var(--body);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;color:var(--muted);padding:10px 12px;border-radius:6px;border:1px solid transparent;background:none;cursor:pointer;min-height:44px;display:inline-flex;align-items:center}
+.nav a:hover,.theme:hover{color:var(--fg);border-color:var(--line)}
+.nav a[aria-current="page"]{color:var(--fg);border-color:var(--accent)}
+.search{display:flex}
+.search input{width:100%;min-height:52px;font:inherit;font-size:1.05rem;padding:12px 16px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+.search input::placeholder{color:var(--muted)}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:.03em;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.6rem,9vw,4.6rem)}
+h2{font-size:1.9rem}
+h3{font-size:1.4rem}
+p{margin:0;max-width:68ch}
+.lede{color:var(--muted);font-size:1.15rem;margin-top:12px}
+.eyebrow{font:500 .78rem var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.sec{display:flex;flex-direction:column;gap:14px}
+.doors{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.door{display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:10px;text-decoration:none;border:1px solid var(--line);background:var(--surface);min-height:96px}
+.door:hover{border-color:var(--accent)}
+.door.hot{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.door .d1{font-family:var(--display);font-size:1.7rem;letter-spacing:.03em;line-height:1}
+.door .d2{font-size:.95rem;opacity:.9}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);text-decoration:none;font-size:.95rem}
+.chip:hover{border-color:var(--accent)}
+.shelves{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.shelf{display:flex;flex-direction:column;gap:6px;padding:18px;border-radius:10px;text-decoration:none;background:var(--surface);border:1px solid var(--line)}
+.shelf:hover{border-color:var(--accent)}
+.shelf h3{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.shelf .n{font:500 .85rem var(--body);color:var(--muted);letter-spacing:.08em}
+.shelf p{color:var(--muted);font-size:.97rem}
+.rows{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.row{display:grid;grid-template-columns:1fr auto;gap:2px 16px;padding:14px 4px;border-bottom:1px solid var(--line);text-decoration:none;min-height:56px}
+.row:hover .row-t{color:var(--accent)}
+.row-t{font-weight:700;font-size:1.05rem}
+.row-s{grid-column:1/-1;color:var(--muted);font-size:.95rem;max-width:68ch}
+.row-m{grid-column:2;grid-row:1;font-size:.8rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.crumbs{font-size:.9rem;color:var(--muted)}
+.crumbs a{color:var(--muted)}
+article{display:flex;flex-direction:column;gap:22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:.85rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.first{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.first h2{font-size:1.3rem;color:var(--accent)}
+.first p{font-size:1.1rem}
+.tryit{background:var(--surface2);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.tryit h2{font-size:1.3rem}
+.end{font-family:var(--display);font-size:1.9rem;letter-spacing:.03em;line-height:1.1}
+.az-group{display:flex;flex-direction:column;gap:6px}
+.az-group h2{color:var(--accent);border-bottom:1px solid var(--line);padding-bottom:4px}
+.az-link{display:flex;justify-content:space-between;gap:12px;padding:10px 4px;text-decoration:none;min-height:44px;align-items:center}
+.az-link:hover span:first-child{color:var(--accent)}
+.az-link span:last-child{color:var(--muted);font-size:.85rem}
+.foot{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:.9rem;display:flex;flex-direction:column;gap:6px}
+.sig{font-family:var(--display);font-size:1.4rem;letter-spacing:.06em;color:var(--fg)}
+.line{padding:14px 16px;border:1px solid var(--line);border-radius:8px;background:var(--surface);display:flex;flex-direction:column;gap:2px}
+.line b{font-size:1.15rem}
+.helpbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:2px solid var(--accent);
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center;justify-content:space-between}
+.helpbar span{font-size:.95rem}
+.helpbar b{color:var(--accent);font-size:1.05rem}
+.helpbar a{font-weight:700;font-size:.9rem;letter-spacing:.06em;text-transform:uppercase;padding:10px 0;min-height:44px;display:inline-flex;align-items:center}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+<style>html{padding-top:env(safe-area-inset-top,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <a class="mark" href="#home">WIKI<b>-</b>BPD</a>
+    <nav class="nav" aria-label="Library">
+      <a href="#home" data-r="home">Library</a>
+      <a href="#az" data-r="az">A to Z</a>
+      <a href="#feelings" data-r="feelings">By feeling</a>
+      <a href="#help" data-r="help">Get help</a>
+      <button class="theme" id="theme" type="button">Light</button>
+    </nav>
+  </header>
+  <div class="search"><input id="q" type="search" placeholder="Search a word, a feeling, a skill" aria-label="Search the library" autocomplete="off"></div>
+  <main id="app"></main>
+  <footer class="foot">
+    <p>Education, not medical care. If you are in danger, use the help bar below or call 911.</p>
+    <p class="sig">Stay gentle. bpdunboxed</p>
+  </footer>
+</div>
+<div class="helpbar" role="region" aria-label="Crisis support">
+  <span>Need a person right now? Call or text <b>988</b> (US)</span>
+  <a href="#help">More help</a>
+</div>
+<script>
+const PILLARS=[
+{id:"understand",n:"Understand",d:"What BPD is, what it is not, and the patterns that have a name."},
+{id:"dbt",n:"DBT",d:"Dialectical Behavior Therapy: the four skill modules and the skills inside them."},
+{id:"regulate",n:"Regulate",d:"How your nervous system runs and how to lower your baseline."},
+{id:"rewire",n:"Rewire",d:"Neuroplasticity, and why patterns can change."},
+{id:"practice",n:"Practice",d:"Skills that work in two minutes."},
+{id:"boundaries",n:"Boundaries",d:"Boundaries are Beautiful. Learn to hold yours."},
+{id:"support",n:"Support",d:"For the people showing up for someone else."}
+];
+const FEELINGS=[
+{id:"spiral",n:"I am spiraling right now"},
+{id:"overwhelmed",n:"Overwhelmed"},
+{id:"rage",n:"Angry, ready to blow"},
+{id:"abandon",n:"Afraid they will leave"},
+{id:"shame",n:"Ashamed"},
+{id:"numb",n:"Numb or empty"},
+{id:"confused",n:"Confused about what happened"},
+{id:"helping",n:"Trying to help someone"}
+];
+const ENTRIES=[
+{id:"bpd-basics",t:"What BPD is",p:"understand",m:4,f:["confused"],
+s:"Borderline personality disorder is a pattern of intense emotions, unstable relationships, and a shaky sense of self. It is real, it is treatable, and it is not a character flaw.",
+b:[["The pattern","BPD shows up as emotions that hit fast and hard, a fear of being left, and a self-image that shifts. Clinicians look for a lasting pattern across several areas of life, not one bad week."],
+["What drives it","Research points to a mix of temperament and environment, often including early hurt or invalidation. Your nervous system learned to scan for danger. That is biology doing its job too well."],
+["What it is not","Not manipulation. Not attention seeking. Not a life sentence. Long-term studies show most people with BPD reach remission, especially with skills-based therapy like DBT."]],
+x:"Say this out loud: my reactions make sense given my wiring, and I get to work with them.",e:"Not broken. Patterned.",r:["splitting","baseline","recovery"]},
+{id:"splitting",t:"Splitting",p:"understand",m:3,f:["confused","abandon"],
+s:"Splitting is seeing people, or yourself, as all good or all bad, with nothing in between. It is a protection pattern, not a flaw in your character.",
+b:[["What it feels like","Someone is perfect on Monday and a betrayer on Tuesday. You flip from I am worthy to I am garbage in a single message. Both feel completely true in the moment."],
+["Why it happens","When emotion floods the brain, nuance is the first thing to go. Black and white thinking is fast, and fast feels safe."],
+["What helps","Slow the moment down. Ask what else could be true. Hold two facts at once, like I am hurt and they still care. Wise Mind trains exactly this."]],
+x:"Write one sentence that starts with: both things are true.",e:"The flip is a signal. Read it, do not obey it.",r:["wise-mind","shame-spiral"]},
+{id:"abandonment",t:"Fear of abandonment",p:"understand",m:3,f:["abandon","spiral"],
+s:"A delayed text feels like a door closing. That alarm is real in your body, even when the facts are quieter.",
+b:[["Why it hits so hard","The brain's threat system treats social loss like physical danger. If you learned early that people leave, the alarm is tuned to high."],
+["The trap","The alarm pushes you to check, chase, test, or pull away first. Those moves can strain the relationship and seem to confirm the fear."],
+["A pause that works","Name it: my abandonment alarm is going off. Then check facts, not feelings. What do I actually know right now?"]],
+x:"Before the next message, take three slow breaths with a long exhale.",e:"The alarm is loud. It is not a prophecy.",r:["paced-breathing","opposite-action","four-fs"]},
+{id:"shame-spiral",t:"The shame spiral",p:"understand",m:3,f:["shame","spiral"],
+s:"Shame says I am bad. Guilt says I did something bad. The spiral feeds on the first one.",
+b:[["How it runs","A trigger, a flood of emotion, an action you regret, then shame, which raises the emotion again. Round and round."],
+["Where to cut in","Between the shame and the next move. You cannot stop the first wave, but you can stop feeding the second."],
+["Swap the story","Replace I am the problem with that was a hard moment and I am learning. Then repair, if repair is needed."]],
+x:"Put a hand on your chest and say: this is shame, and it will pass.",e:"Shame is a feeling, not a verdict.",r:["radical-acceptance","opposite-action","paced-breathing"]},
+{id:"baseline",t:"Your baseline",p:"regulate",m:3,f:["overwhelmed","spiral"],
+s:"Your baseline is how activated your nervous system is before anything even happens. Lower it, and the same trigger lands softer.",
+b:[["Think of a thermostat","Poor sleep, hunger, stress, and no downtime all raise the setting. A high baseline means small things tip you over fast."],
+["The levers","Sleep, food, movement, time outside, steady routines, people who feel safe, and daily skill practice. Boring and powerful."],
+["Why it works","You are not building willpower. You are giving your body less to fight, so there is more room to choose."]],
+x:"Pick one lever for today. Water, a walk, or an earlier bedtime. Just one.",e:"Lower the baseline and the spikes get shorter.",r:["window","paced-breathing","neuroplasticity"]},
+{id:"window",t:"Window of tolerance",p:"regulate",m:3,f:["overwhelmed","numb"],
+s:"The window of tolerance is the zone where you can feel things and still think. Outside it, you are either too hot or too shut down.",
+b:[["Too hot","Above the window: panic, rage, racing thoughts. Fight and flight live here."],
+["Too cold","Below the window: numb, foggy, empty, frozen. Shutdown lives here."],
+["Widening it","Skills and safe connection widen the window over time. In the moment, match the skill to the side. Cool down if you are hot. Wake up gently if you are cold."]],
+x:"Ask yourself: hot, cold, or in the window? Name it in one word.",e:"A narrow window can be widened with practice.",r:["grounding","paced-breathing","four-fs"]},
+{id:"four-fs",t:"Fight, flight, freeze, fawn",p:"regulate",m:3,f:["overwhelmed","abandon"],
+s:"Four survival responses your body picks without asking you. None of them are character traits.",
+b:[["Fight","Anger, arguing, controlling. Your body decides to push back."],
+["Flight","Leaving, avoiding, staying busy. Your body decides to run."],
+["Freeze","Numb, stuck, blank. Your body decides to go still."],
+["Fawn","People pleasing, over apologizing, saying yes when you mean no. Your body decides to keep the peace to stay safe."],
+["Use it","Catch which one is running. The name alone gives your thinking brain a seat back at the table."]],
+x:"Ask: which one is this? Then pick one small skill to match.",e:"Old protection. Update it, do not hate it.",r:["fawn-to-no","window","grounding"]},
+{id:"polyvagal",t:"Polyvagal theory, in plain words",p:"regulate",m:4,f:["overwhelmed"],
+s:"Polyvagal theory is a popular map of how the vagus nerve and body states shape safety and connection. It is a useful lens for self-understanding, and parts of it are still debated by researchers.",
+b:[["The map","The theory, from Stephen Porges, describes states of safety, mobilization, and shutdown. It says your body keeps scanning for cues of safety or danger."],
+["The honest part","Some researchers challenge parts of the biology. Treat it as a helpful lens, not settled science. The practices it points to, like slow breathing, safe company, and gentle movement, are supported on their own."],
+["Why keep it","It moves the question from what is wrong with me to what state my body is in."]],
+x:"Notice one cue of safety around you right now. A warm light, a quiet room, a pet.",e:"Safety is something your body can learn to find.",r:["window","paced-breathing","four-fs"]},
+{id:"neuroplasticity",t:"Neuroplasticity",p:"rewire",m:4,f:["spiral","shame"],
+s:"Your brain changes with repeated experience. The patterns you have are not fixed, and that is the whole reason skills work.",
+b:[["What it means","Connections between brain cells strengthen with use and fade without it. What you repeat gets easier."],
+["The catch","Old patterns have had years of practice. New ones feel clumsy at first. That clumsiness is the work happening."],
+["How to use it","Small, frequent reps beat rare big efforts. Two minutes of a skill daily does more than an hour once a month."]],
+x:"Choose one skill and do it once today, even if you feel calm.",e:"Repeat what you want to become automatic.",r:["recovery","paced-breathing","stop-skill"]},
+{id:"recovery",t:"Recovery is real",p:"rewire",m:3,f:["shame","spiral"],
+s:"Long-term follow-up studies find that most people with BPD no longer meet the criteria after several years. Healing is common.",
+b:[["What the research shows","Studies that follow people for a decade or more report high rates of remission. Relapse can happen, but it is less common."],
+["What helps most","Structured therapy like DBT, a supportive relationship, steady skills practice, and care for sleep, substances, and any other conditions."],
+["Bad days are not failure","Recovery is a curve with dips. A hard week does not erase the work."]],
+x:"Write down one thing you handle differently this year than last year.",e:"Progress is not a straight line. It is still progress.",r:["neuroplasticity","bpd-basics"]}
+];
+ENTRIES.push(
+{id:"paced-breathing",t:"Paced breathing",p:"practice",m:2,f:["spiral","rage","overwhelmed"],
+s:"Breathe in for 4, out for 6 to 8. The longer exhale tells your body it can stand down.",
+b:[["How","Sit or stand. Breathe in through your nose for a count of 4. Breathe out slowly through your mouth for 6 to 8. Repeat for two minutes."],
+["Why it works","A long exhale slows the heart rate and eases the alarm response."],
+["If it feels off","If counting makes you anxious, just make the out-breath longer than the in-breath. No counting needed. Stop if you feel dizzy."]],
+x:"Start now. Four in, six out. Ten rounds.",e:"Slow exhale, lower alarm.",r:["grounding","stop-skill","baseline"]},
+{id:"grounding",t:"5-4-3-2-1 grounding",p:"practice",m:2,f:["spiral","numb","overwhelmed"],
+s:"Pull your attention out of your head and into the room, using your five senses.",
+b:[["How","Name 5 things you can see. 4 you can feel. 3 you can hear. 2 you can smell. 1 you can taste. Say them out loud or in your head."],
+["Why it works","It gives your thinking brain a simple job in the present, which interrupts the loop."],
+["Make it yours","If a sense is hard, skip it. Describe colors, textures, or sounds in detail instead."]],
+x:"Start with five things you can see. Go slow.",e:"You are here. This is now.",r:["paced-breathing","window"]},
+{id:"stop-skill",t:"STOP",p:"practice",m:2,f:["rage","spiral"],
+s:"A four-step pause for the moment before you act on a big urge. A DBT skill from Marsha Linehan.",
+b:[["The steps","S: Stop. Freeze, do not act. T: Take a step back and breathe. O: Observe what is happening inside you and around you. P: Proceed mindfully, choosing what helps."],
+["When to use it","Before sending the text, slamming the door, or saying the thing."],
+["Tip","The pause can be ten seconds. It still counts."]],
+x:"Next urge, say STOP in your head and take one breath before anything else.",e:"A pause is a choice.",r:["wise-mind","opposite-action","paced-breathing"]},
+{id:"wise-mind",t:"Wise Mind",p:"practice",m:3,f:["confused","spiral"],
+s:"Wise Mind is the overlap between emotion mind and reasonable mind. It knows what is true and what matters.",
+b:[["Two minds","Emotion mind runs on feeling. Reasonable mind runs on facts. Wise Mind honors both."],
+["Finding it","Ask a quiet question: what do I know, deep down? Breathe and listen for the calm answer, not the loud one."],
+["Practice","It gets easier on ordinary days. Try it on small choices first."]],
+x:"Ask: what would my Wise Mind say? Wait for a quiet answer.",e:"The calm answer was in you the whole time.",r:["stop-skill","splitting"]},
+{id:"opposite-action",t:"Opposite action",p:"practice",m:3,f:["rage","shame","numb"],
+s:"When an emotion does not fit the facts, act opposite to its urge.",
+b:[["The idea","Fear says avoid. Shame says hide. Anger says attack. Sadness says withdraw. Opposite action means gently doing the reverse."],
+["When to use it","Only when the emotion does not fit the facts, or acting on it would make things worse. If the danger is real, listen to it."],
+["Do it all the way","Change your posture, voice, and words too, not only the action."]],
+x:"Pick one small opposite. If you want to hide, text one safe person hi.",e:"The urge is information. The action is yours.",r:["shame-spiral","stop-skill"]},
+{id:"radical-acceptance",t:"Radical acceptance",p:"practice",m:4,f:["shame","rage","abandon"],
+s:"Accepting what is true does not mean approving it. It means you stop fighting reality so you can respond to it.",
+b:[["What it is","Saying this happened, and I cannot change it right now. You do not have to like it or approve of it. You just stop arguing with it."],
+["Why it helps","Pain plus fighting reality becomes suffering. Acceptance takes away the second part."],
+["How to practice","Notice the fight. Breathe. Say: it is what it is, and I can handle the next step. Repeat as needed. It is a practice, not a one-time click."]],
+x:"Finish this sentence: right now, the fact is...",e:"Acceptance is where you start moving again.",r:["wise-mind","shame-spiral"]},
+{id:"boundary-basics",t:"What a boundary is",p:"boundaries",m:3,f:["abandon","overwhelmed"],
+s:"A boundary is what you will do, not what you demand others do.",
+b:[["Not a wall","A boundary is a line that protects your energy, safety, and values. It limits your own actions, like I will leave the conversation if shouting starts."],
+["Not punishment","Boundaries are not threats or tests. They are information, delivered calmly."],
+["Start small","Pick one low-stakes boundary. Practice it until it feels normal."]],
+x:"Complete this: I will ___ if ___ happens.",e:"Boundaries are beautiful because they keep love safe.",r:["dear-man","fawn-to-no"]},
+{id:"fawn-to-no",t:"From fawn to no",p:"boundaries",m:4,f:["shame","abandon"],
+s:"If yes comes out before you decide, it is not a flaw. It is a safety habit you can retrain.",
+b:[["The habit","Fawning means appeasing to avoid conflict. It is common after growing up where saying no was unsafe."],
+["The cost","You end up resentful, exhausted, and unseen."],
+["Practice","Buy time: let me think about it and get back to you. Then decide. Start with low-stakes nos."]],
+x:"Use this once today: let me get back to you on that.",e:"A delayed yes beats a resentful one.",r:["four-fs","dear-man"]},
+{id:"dear-man",t:"DEAR MAN",p:"boundaries",m:4,f:["abandon","rage"],
+s:"A DBT script for asking for what you need, or saying no, without losing the relationship or yourself.",
+b:[["The letters","Describe the facts. Express your feelings. Assert what you want. Reinforce why it helps. Stay Mindful. Appear confident. Negotiate."],
+["Example","You have cancelled twice this week (describe). I felt hurt (express). I would like us to set a time that sticks (assert). That would help me trust the plan (reinforce)."],
+["Tips","Rehearse out loud first. Keep it short. Repeat your point calmly if they sidestep."]],
+x:"Write one DEAR MAN, three sentences, for something small.",e:"You can be clear and kind at once.",r:["boundary-basics","fawn-to-no"]},
+{id:"patterns-in-kids",t:"Noticing patterns in a child",p:"support",m:5,f:["helping","confused"],
+s:"You do not need a label to start. You need a clear record of what you see.",
+b:[["Keep a simple log","Write down what happened before, what the child did, and what happened after. Add sleep, food, school, and visits. Patterns often show within weeks."],
+["Look for what helps","Note what calmed things down, even a little. That is as useful as the trigger."],
+["Bring it to a professional","Clinicians are usually careful about diagnosing BPD before adulthood. A good log helps a pediatrician or therapist see the whole picture, including loss and trauma."]],
+x:"Start tonight: one line for before, one for during, one for after.",e:"You noticed. That is where help begins.",r:["co-regulation","what-to-say"]},
+{id:"co-regulation",t:"Co-regulation",p:"support",m:4,f:["helping"],
+s:"A child borrows your calm until they grow their own. Find yours first.",
+b:[["Settle yourself first","Slow your breath, drop your shoulders, lower your voice. Your nervous system is the loudest message in the room."],
+["Connect before you correct","Get low, use few words, offer presence. Teaching comes after the storm."],
+["Repair after","If you lose your temper, come back and say so. Repair teaches more than perfection."],
+["You need support too","Raising a grandchild is heavy. Respite care, support groups, and your state's kinship navigator program can help."]],
+x:"Next hard moment, exhale slowly before you say a word.",e:"Calm is contagious, and so is care.",r:["patterns-in-kids","paced-breathing"]},
+{id:"what-to-say",t:"What to say in the storm",p:"support",m:3,f:["helping","rage"],
+s:"Validation first. Solutions later.",
+b:[["Try","That makes sense. I am here. You are not in trouble for feeling this. Tell me when you are ready."],
+["Skip","Calm down. You are overreacting. It is not a big deal. Those land as: you are wrong to feel this."],
+["Validation is not agreement","You can say a feeling makes sense and still hold the limit on behavior."]],
+x:"Practice one phrase out loud: that makes sense.",e:"Feelings first, then solutions.",r:["co-regulation"]}
+);
+ENTRIES.push(
+{id:"dbt-overview",t:"What DBT is",p:"dbt",m:4,f:["confused","spiral"],
+s:"Dialectical Behavior Therapy is a skills-based treatment built by Marsha Linehan for people with intense emotions. It is the best-studied therapy for BPD.",
+b:[["The core idea","Dialectical means holding two truths at once. You are doing the best you can, and you need to learn new skills. Acceptance and change, together."],
+["The four modules","Mindfulness, distress tolerance, emotion regulation, and interpersonal effectiveness. Each one is a toolbox of named skills."],
+["How full DBT runs","Standard DBT usually includes weekly individual therapy, a skills group, between-session coaching, and a consultation team for the therapist. Many people also use the skills on their own as a supplement, not a replacement for care."]],
+x:"Pick the module that matches your hardest moment, and open one skill from it.",e:"Acceptance and change. Both. Every day.",r:["mindfulness","distress-tolerance","emotion-regulation","interpersonal"]},
+{id:"mindfulness",t:"DBT module: Mindfulness",p:"dbt",m:3,f:["confused","numb"],
+s:"Mindfulness is the base of every other DBT skill. It trains you to notice what is happening without being swept away by it.",
+b:[["What skills","Observe, describe, and participate. Notice the facts, put words on them, then fully take part in what you are doing."],
+["How skills","Without judgment, one thing at a time, and doing what works. Not what is fair, what works."],
+["Wise Mind","The center of the module. The place where feeling and reason overlap."]],
+x:"Observe one thing for 30 seconds. Describe it in five plain words.",e:"Notice first. Everything else follows.",r:["wise-mind","grounding","dbt-overview"]},
+{id:"distress-tolerance",t:"DBT module: Distress tolerance",p:"dbt",m:4,f:["spiral","rage","overwhelmed"],
+s:"Distress tolerance is how you get through a crisis without making it worse. You are not fixing the problem yet. You are surviving the peak.",
+b:[["Crisis survival","STOP, weighing pros and cons of acting on the urge, distracting with activities or people, and self-soothing with the five senses."],
+["Reality acceptance","Radical acceptance, and turning the mind toward accepting what you cannot change."],
+["When to use it","When the emotion is too high to think. Solve problems later, when you are back in your window."]],
+x:"Choose one: STOP, self-soothe, or paced breathing. Do it for two minutes.",e:"Get through the peak first.",r:["stop-skill","self-soothe","radical-acceptance","paced-breathing"]},
+{id:"emotion-regulation",t:"DBT module: Emotion regulation",p:"dbt",m:4,f:["rage","shame","overwhelmed"],
+s:"Emotion regulation helps you understand your feelings, lower their intensity, and have fewer painful ones over time.",
+b:[["Understand","Name the emotion, what set it off, and what it urges you to do."],["Change","Check the facts, use opposite action, and solve the problem when the problem is real."],["Lower the baseline","PLEASE skills, building mastery, and adding small positive experiences to your days."]],
+x:"Name your emotion in one word, and the urge that came with it.",e:"Name it, and it shrinks.",r:["check-the-facts","opposite-action","please-skill","baseline"]},
+{id:"interpersonal",t:"DBT module: Interpersonal effectiveness",p:"dbt",m:4,f:["abandon","rage"],
+s:"Interpersonal effectiveness is how you ask for what you need, say no, and keep your relationships and your self-respect.",
+b:[["Get what you need","DEAR MAN: describe, express, assert, reinforce, stay mindful, appear confident, negotiate."],["Keep the relationship","GIVE: be Gentle, act Interested, Validate, use an Easy manner."],["Keep your self-respect","FAST: be Fair, skip needless apologies, Stick to your values, be Truthful."]],
+x:"Choose one letter from GIVE and use it in your next conversation.",e:"Clear, kind, and yours.",r:["dear-man","boundary-basics","fawn-to-no"]},
+{id:"please-skill",t:"PLEASE",p:"dbt",m:3,f:["overwhelmed","spiral"],
+s:"A DBT emotion regulation skill: take care of your body so your emotions have less to push against.",
+b:[["The letters","Treat PhysicaL illness. Balance Eating. Avoid mood-altering substances. Balance Sleep. Get Exercise."],["Why it works","A tired, hungry, run-down body runs a high baseline. PLEASE lowers it before the trigger ever shows up."],["Keep it gentle","Start with one letter. If food or exercise is a hard topic for you, work on it with your therapist."]],
+x:"Pick one letter and do one small thing for it today.",e:"Take care of the body, and the mind gets room.",r:["baseline","emotion-regulation"]},
+{id:"check-the-facts",t:"Check the facts",p:"dbt",m:3,f:["spiral","abandon","confused"],
+s:"A five-question check for when an emotion feels bigger than the situation.",
+b:[["The questions","What is the emotion? What happened, in facts only? What am I assuming about it? What is the worst case, and could I cope? Does the size of this emotion fit the facts?"],["What you do with it","If it fits, solve the problem. If it does not fit, use opposite action and let the feeling settle."]],
+x:"Write the facts in one sentence with no adjectives.",e:"Facts first. Then decide.",r:["opposite-action","wise-mind","splitting"]},
+{id:"self-soothe",t:"Self-soothe with the five senses",p:"dbt",m:2,f:["spiral","overwhelmed","numb"],
+s:"A DBT distress tolerance skill: comfort yourself through sight, sound, smell, taste, and touch.",
+b:[["Examples","Look at something calming. Play a gentle song. Smell something you love. Sip something warm. Wrap up in a soft blanket."],["Why it works","It tells your body that you are safe and cared for right now, using the channels it trusts most."],["Make a kit","Keep a small box with a few things for each sense, so you do not have to think when you need it."]],
+x:"Pick one sense and give it one kind thing right now.",e:"Be gentle with the body, and it will follow.",r:["distress-tolerance","grounding","paced-breathing"]}
+);
+(function(){
+var $=function(s){return document.querySelector(s)};
+var app=$('#app'),q=$('#q'),root=document.documentElement;
+var P={},F={},E={};
+PILLARS.forEach(function(p){P[p.id]=p});
+FEELINGS.forEach(function(f){F[f.id]=f});
+ENTRIES.forEach(function(e){E[e.id]=e});
+var byAZ=ENTRIES.slice().sort(function(a,b){return a.t.localeCompare(b.t)});
+function row(e){return '<a class="row" href="#e-'+e.id+'"><span class="row-t">'+e.t+'</span><span class="row-m">'+e.m+' min</span><span class="row-s">'+e.s+'</span></a>'}
+function rows(list){return '<div class="rows">'+list.map(row).join('')+'</div>'}
+function count(pid){return ENTRIES.filter(function(e){return e.p===pid}).length}
+function home(){
+  return '<div class="sec"><p class="eyebrow">A library for any moment</p><h1>Broken? No. Patterned. Yes.</h1><p class="lede">And your pattern has a name. Start where you are.</p></div>'+
+  '<div class="sec"><div class="doors">'+
+  '<a class="door hot" href="#f-spiral"><span class="d1">Right now</span><span class="d2">I am spiraling. Give me something short.</span></a>'+
+  '<a class="door" href="#p-understand"><span class="d1">Understand</span><span class="d2">Name what is happening and why.</span></a>'+
+  '<a class="door" href="#p-support"><span class="d1">Helping someone</span><span class="d2">Patterns, calm, and what to say.</span></a>'+
+  '</div><div class="chips"><a class="chip" href="#t-2">Under 2 minutes</a><a class="chip" href="#t-3">Under 3 minutes</a><a class="chip" href="#t-5">5 minutes or less</a></div></div>'+
+  '<div class="sec"><h2>Pillars</h2><div class="shelves">'+PILLARS.map(function(p){return '<a class="shelf" href="#p-'+p.id+'"><h3>'+p.n+'<span class="n">'+count(p.id)+' topics</span></h3><p>'+p.d+'</p></a>'}).join('')+'</div></div>'+
+  '<div class="sec"><h2>By feeling</h2><div class="chips">'+FEELINGS.map(function(f){return '<a class="chip" href="#f-'+f.id+'">'+f.n+'</a>'}).join('')+'</div></div>'
+}
+function pillar(id){
+  var p=P[id];if(!p)return home();
+  return '<p class="crumbs"><a href="#home">Library</a> / '+p.n+'</p><div class="sec"><h1>'+p.n+'</h1><p class="lede">'+p.d+'</p></div>'+rows(ENTRIES.filter(function(e){return e.p===id}))
+}
+function feeling(id){
+  var f=F[id];if(!f)return feelings();
+  var list=ENTRIES.filter(function(e){return e.f.indexOf(id)>-1}).sort(function(a,b){return a.m-b.m});
+  return '<p class="crumbs"><a href="#feelings">By feeling</a> / '+f.n+'</p><div class="sec"><h1>'+f.n+'</h1><p class="lede">Shortest first.</p></div>'+rows(list)
+}
+function feelings(){
+  return '<div class="sec"><h1>By feeling</h1><p class="lede">Pick the one closest to now.</p></div><div class="doors">'+FEELINGS.map(function(f){var n=ENTRIES.filter(function(e){return e.f.indexOf(f.id)>-1}).length;return '<a class="door" href="#f-'+f.id+'"><span class="d1">'+f.n+'</span><span class="d2">'+n+' topics</span></a>'}).join('')+'</div>'
+}
+function timed(n){
+  var list=ENTRIES.filter(function(e){return e.m<=n}).sort(function(a,b){return a.m-b.m});
+  return '<p class="crumbs"><a href="#home">Library</a> / Short reads</p><div class="sec"><h1>'+n+' minutes or less</h1></div>'+rows(list)
+}
+function az(){
+  var groups={};byAZ.forEach(function(e){var l=e.t.charAt(0).toUpperCase();(groups[l]=groups[l]||[]).push(e)});
+  return '<div class="sec"><h1>A to Z</h1><p class="lede">Every topic in the library, in order.</p></div>'+Object.keys(groups).sort().map(function(l){
+    return '<div class="az-group"><h2>'+l+'</h2>'+groups[l].map(function(e){return '<a class="az-link" href="#e-'+e.id+'"><span>'+e.t+'</span><span>'+P[e.p].n+'</span></a>'}).join('')+'</div>'}).join('')
+}
+function entry(id){
+  var e=E[id];if(!e)return home();var p=P[e.p];
+  return '<p class="crumbs"><a href="#home">Library</a> / <a href="#p-'+p.id+'">'+p.n+'</a></p>'+
+  '<article><div><h1>'+e.t+'</h1><div class="meta"><span>'+p.n+'</span><span>'+e.m+' min read</span></div></div>'+
+  '<div class="first"><h2>Read this first</h2><p>'+e.s+'</p></div>'+
+  e.b.map(function(s){return '<div class="sec"><h2>'+s[0]+'</h2><p>'+s[1]+'</p></div>'}).join('')+
+  '<div class="tryit"><h2>Try this now</h2><p>'+e.x+'</p></div>'+
+  '<p class="end">'+e.e+'</p>'+
+  '<div class="sec"><h2>Related</h2>'+rows(e.r.map(function(r){return E[r]}).filter(Boolean))+'</div></article>'
+}
+function help(){
+  return '<div class="sec"><h1>Get help</h1><p class="lede">If you might hurt yourself, or someone else, reach a person now.</p></div>'+
+  '<div class="sec">'+
+  '<div class="line"><b>988 Suicide and Crisis Lifeline</b><span>Call or text 988. US, free, any hour.</span></div>'+
+  '<div class="line"><b>Crisis Text Line</b><span>Text HOME to 741741. US, free, any hour.</span></div>'+
+  '<div class="line"><b>Emergency</b><span>Call 911 if you are in immediate danger.</span></div>'+
+  '<div class="line"><b>Outside the US</b><span>Find a local line at findahelpline.com</span></div>'+
+  '</div><div class="sec"><p>Reaching out is a skill, not a weakness. Use it.</p></div>'
+}
+function search(t){
+  var terms=t.toLowerCase().split(/\s+/).filter(Boolean);
+  var scored=ENTRIES.map(function(e){
+    var title=e.t.toLowerCase(),sum=e.s.toLowerCase();
+    var body=(e.b.map(function(s){return s[0]+' '+s[1]}).join(' ')+' '+e.x+' '+e.f.map(function(f){return F[f].n}).join(' ')+' '+P[e.p].n).toLowerCase();
+    var sc=0,ok=true;
+    terms.forEach(function(w){
+      var hit=false;
+      if(title.indexOf(w)>-1){sc+=6;hit=true}
+      if(sum.indexOf(w)>-1){sc+=3;hit=true}
+      if(body.indexOf(w)>-1){sc+=1;hit=true}
+      if(!hit)ok=false;
+    });
+    return ok?{e:e,sc:sc}:null
+  }).filter(Boolean).sort(function(a,b){return b.sc-a.sc||a.e.m-b.e.m});
+  var h='<div class="sec"><h1>Search</h1><p class="lede">'+scored.length+' '+(scored.length===1?'topic':'topics')+' for "'+t.replace(/[<>&"]/g,'')+'"</p></div>';
+  if(!scored.length)h+='<div class="sec"><p>Nothing matched. Try one plain word, like shame, panic, or boundary. Or <a href="#feelings">browse by feeling</a>.</p></div>';
+  else h+=rows(scored.map(function(x){return x.e}));
+  return h
+}
+function route(){
+  var h=(location.hash||'#home').slice(1),out;
+  if(h==='home'||h==='')out=home();
+  else if(h==='az')out=az();
+  else if(h==='feelings')out=feelings();
+  else if(h==='help')out=help();
+  else if(h.indexOf('p-')===0)out=pillar(h.slice(2));
+  else if(h.indexOf('f-')===0)out=feeling(h.slice(2));
+  else if(h.indexOf('e-')===0)out=entry(h.slice(2));
+  else if(h.indexOf('t-')===0)out=timed(parseInt(h.slice(2),10)||3);
+  else out=home();
+  app.innerHTML=out;
+  var key=h.split('-')[0];
+  document.querySelectorAll('.nav a').forEach(function(a){
+    var r=a.getAttribute('data-r');
+    var on=(r==='home'&&(key==='home'||key===''||key==='p'||key==='e'||key==='t'))||(r==='az'&&key==='az')||(r==='feelings'&&(key==='feelings'||key==='f'))||(r==='help'&&key==='help');
+    if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+  });
+  window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',function(){q.value='';route()});
+q.addEventListener('input',function(){
+  var t=q.value.trim();
+  if(t){app.innerHTML=search(t)}else route();
+});
+var tb=$('#theme');
+function cur(){return root.getAttribute('data-theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}
+function label(){tb.textContent=cur()==='dark'?'Light':'Dark'}
+try{var sv=localStorage.getItem('wikibpd-theme');if(sv==='light'||sv==='dark')root.setAttribute('data-theme',sv)}catch(e){}
+tb.addEventListener('click',function(){
+  var n=cur()==='dark'?'light':'dark';
+  root.setAttribute('data-theme',n);
+  try{localStorage.setItem('wikibpd-theme',n)}catch(e){}
+  label();
+});
+label();route();
+})();
+</script>
+</body>
+</html>
