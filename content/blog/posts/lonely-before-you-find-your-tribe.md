@@ -75,4 +75,4 @@ The lonely part is real. It's also temporary. And you don't have to be perfect t
 
 That's the work. And you are not doing it alone, not really.
 
-j\~
+*— Jen, BPD Unboxed*

@@ -79,4 +79,4 @@ And be gentle with yourself while you figure it out. You're not confused because
 
 That's the work. And we'll keep figuring it out together.
 
-j\~
+*— Jen, BPD Unboxed*

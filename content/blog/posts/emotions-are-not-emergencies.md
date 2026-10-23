@@ -76,3 +76,5 @@ Not perfect. Just better.
 You are allowed to feel it all. And you are strong enough to let it pass through.
 
 That's the work. And we're going to keep figuring it out together.
+
+*— Jen, BPD Unboxed*

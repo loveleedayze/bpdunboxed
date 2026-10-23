@@ -99,4 +99,4 @@ You can be quiet and powerful at the same time.
 
 That's the work. And that's what we're going to keep figuring out together.
 
-j\~
+*— Jen, BPD Unboxed*

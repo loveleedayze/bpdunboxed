@@ -69,4 +69,4 @@ Your depth is not a problem to hide. It's a capacity to learn how to use. And yo
 
 That's the work. And we're going to keep figuring it out together.
 
-j\~
+*— Jen, BPD Unboxed*

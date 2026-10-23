@@ -98,3 +98,5 @@ Because yesterday might have been my whole world. Today, I might not be able to 
 My job isn't to pretend one of them didn't happen. My job is to learn how to hold both.
 
 That's the work. And that's what we're going to keep figuring out together.
+
+*— Jen, BPD Unboxed*
