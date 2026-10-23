@@ -14,6 +14,9 @@
     --color-white: #FFFFFF;
     --color-gray-light: #E5E7EB;
     --color-gray-dark: #374151;
+    --color-cream: #F7F3EE;
+    --color-ink: #1F1F1F;
+    --color-red-deep: #C81E1E;
     --font-heading: 'Bebas Neue', sans-serif;
     --font-body: 'Ubuntu', sans-serif;
     --transition: all 0.3s ease;
@@ -133,6 +136,76 @@ p {
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.nav-tagline {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    color: var(--color-white);
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.hero-description.hero-kicker {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    color: var(--color-white);
+    letter-spacing: 1px;
+}
+
+/* Quieter homepage headline: "Broken? No. Patterned? Yes." shouldn't shout */
+.hero-title.hero-title-quiet {
+    font-size: 2.25rem;
+    margin-bottom: 0.75rem;
+}
+
+/* ============================================
+   BACK TO TOP: a semicolon. Your story isn't over.
+   ============================================ */
+
+.back-to-top {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-red);
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: var(--color-red);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 2rem;
+    line-height: 1;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: var(--transition);
+    z-index: 999;
+}
+
+.back-to-top span {
+    margin-top: -0.2em;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    background-color: var(--color-red);
+    color: var(--color-white);
+    text-decoration: none;
 }
 
 .nav-menu {
@@ -295,6 +368,36 @@ p {
 
 .about p:last-child {
     margin-bottom: 0;
+}
+
+/* ============================================
+   LIGHT SECTIONS (About, Blog teaser): breathing room between the dark ones
+   ============================================ */
+
+#about,
+#blog {
+    background-color: var(--color-cream);
+}
+
+#about h2,
+#blog h2,
+#blog .blog-intro {
+    color: var(--color-red-deep);
+}
+
+#about p,
+#blog .blog-teaser-text {
+    color: var(--color-ink);
+}
+
+#blog .btn-primary {
+    background-color: var(--color-red-deep);
+    border-color: var(--color-red-deep);
+}
+
+#blog .btn-primary:hover {
+    background-color: transparent;
+    color: var(--color-red-deep);
 }
 
 /* ============================================
@@ -933,6 +1036,10 @@ p {
         font-size: 2.5rem;
     }
 
+    .hero-title.hero-title-quiet {
+        font-size: 1.85rem;
+    }
+
     .hero-subtitle {
         font-size: 1.25rem;
     }
@@ -963,6 +1070,19 @@ p {
         font-size: 1rem;
     }
 
+    .nav-logo {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .nav-tagline {
+        font-size: 0.75rem;
+    }
+
+    .hero-description.hero-kicker {
+        font-size: 1.4rem;
+    }
+
     h1 {
         font-size: 1.75rem;
     }
@@ -986,6 +1106,18 @@ p {
 
     .hero-title {
         font-size: 1.75rem;
+    }
+
+    .hero-title.hero-title-quiet {
+        font-size: 1.4rem;
+    }
+
+    .back-to-top {
+        right: 1rem;
+        bottom: 1rem;
+        width: 44px;
+        height: 44px;
+        font-size: 1.7rem;
     }
 
     .hero-subtitle {

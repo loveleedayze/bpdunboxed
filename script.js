@@ -240,6 +240,23 @@ window.addEventListener('scroll', () => {
 });
 
 // ============================================
+// BACK TO TOP (the semicolon)
+// ============================================
+
+const backToTop = document.querySelector('.back-to-top');
+
+if (backToTop) {
+    window.addEventListener('scroll', () => {
+        backToTop.classList.toggle('visible', window.pageYOffset > 600);
+    });
+
+    backToTop.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+// ============================================
 // CONSOLE MESSAGE (optional brand touch)
 // ============================================
 
