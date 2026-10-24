@@ -12,6 +12,15 @@ module.exports = function (eleventyConfig) {
     return new Date(dateObj).toISOString().split("T")[0];
   });
 
+  // RFC 822 dates for the RSS feed (Substack's importer reads these).
+  eleventyConfig.addFilter("rssDate", (dateObj) => new Date(dateObj).toUTCString());
+
+  // Feed readers and importers can't resolve root-relative links like
+  // /blog/foo/, so rewrite href/src to absolute URLs inside feed content.
+  eleventyConfig.addFilter("absoluteUrls", (html, siteUrl) =>
+    (html || "").replace(/(href|src)="\/(?!\/)/g, `$1="${siteUrl}/`)
+  );
+
   return {
     dir: {
       input: "content/blog",

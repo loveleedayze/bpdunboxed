@@ -1,0 +1,31 @@
+---
+permalink: /feed.xml
+eleventyExcludeFromCollections: true
+siteUrl: https://bpdunboxed.com
+---
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>BPD Unboxed</title>
+    <link>{{ siteUrl }}/blog/</link>
+    <atom:link href="{{ siteUrl }}/blog/feed.xml" rel="self" type="application/rss+xml" />
+    <description>Real thoughts. Real tools. Real transformation. Nervous system education and no-shame BPD essays.</description>
+    <language>en-us</language>
+    {%- set posts = collections.post | reverse %}
+    {%- if posts.length %}
+    <lastBuildDate>{{ posts[0].date | rssDate }}</lastBuildDate>
+    {%- endif %}
+    {%- for post in posts %}
+    {%- set postUrl = siteUrl + "/blog/" + post.fileSlug + "/" %}
+    <item>
+      <title>{{ post.data.title }}</title>
+      <link>{{ postUrl }}</link>
+      <guid isPermaLink="true">{{ postUrl }}</guid>
+      <dc:creator>Jen</dc:creator>
+      <pubDate>{{ post.date | rssDate }}</pubDate>
+      <description>{{ post.data.excerpt }}</description>
+      <content:encoded><![CDATA[{{ post.templateContent | absoluteUrls(siteUrl) | safe }}]]></content:encoded>
+    </item>
+    {%- endfor %}
+  </channel>
+</rss>
