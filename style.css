@@ -390,6 +390,15 @@ p {
     color: var(--color-ink);
 }
 
+/* bpdunboxed.bro is always lowercase. It's quieter. Bebas Neue has no
+   lowercase letters, so this heading uses the body font */
+#bro h2 {
+    font-family: var(--font-body);
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0.5px;
+}
+
 #blog .btn-primary {
     background-color: var(--color-red-deep);
     border-color: var(--color-red-deep);
